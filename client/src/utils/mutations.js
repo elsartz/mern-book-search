@@ -29,6 +29,7 @@ export const SAVE_BOOK = gql`
         email
         bookCount
         savedBooks {
+          _id
             authors
             description
             bookId
@@ -46,6 +47,7 @@ export const REMOVE_BOOK = gql`
         email
         bookCount
         savedBooks {
+          _id
             authors
             description
             bookId

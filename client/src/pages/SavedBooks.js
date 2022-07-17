@@ -58,7 +58,7 @@ const SavedBooks = () => {
         update: cache => {
           const setUserData = cache.readQuery({ query: QUERY_GET_ME });
           const userDataCache = setUserData.me;
-          const savedBooksCache = userDataCache.savedBooks;
+          const savedBooksCache = userDataCache.savedBooks || [];
           const updatedBookCache = savedBooksCache.filter((book) => book.bookId !== bookId);
           setUserData.me.savedBooks = updatedBookCache;
           cache.writeQuery({ query: QUERY_GET_ME , setUserData: {setUserData: {...setUserData.me.savedBooks}}})
