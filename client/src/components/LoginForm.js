@@ -6,7 +6,7 @@ import { LOGIN_USER } from '../utils/mutations';
 // import { loginUser } from '../utils/API';
 import Auth from '../utils/auth';
 
-const LoginForm = () => {
+const LoginForm = (props) => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -28,20 +28,30 @@ const LoginForm = () => {
       event.stopPropagation();
     }
 
+    // try {
+    //   const {response} = await loginUser({ variables: {...userFormData}});
+    //   console.log('response:',response);
+
+    //   if (!response) {
+    //     throw new Error('something went wrong!');
+    //   }
+
+    //   // const { token, user } = await response.json();
+    //   // console.log(user);
+    //   Auth.login(response.login.token);
+    // } catch (err) {
+    //   console.error(err);
+    //   setShowAlert(true);
+    // }
+
     try {
-      const response = await loginUser(userFormData);
-      console.log('response:',response);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
-
-      const { token, user } = await response.json();
-      console.log(user);
+      const mutationResponse = await loginUser({
+        variables: { email: userFormData.email, password: userFormData.password },
+      });
+      const token = mutationResponse.data.login.token;
       Auth.login(token);
-    } catch (err) {
-      console.error(err);
-      setShowAlert(true);
+    } catch (e) {
+      console.log(e);
     }
 
     setUserFormData({
