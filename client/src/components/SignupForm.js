@@ -31,16 +31,27 @@ const SignupForm = () => {
     }
 
     try {
-      const {response} = await createUser({
-        variables: {...userFormData}});
+      // const {response} = await createUser({
+      //   variables: {...userFormData}});
 
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
+      // // if (!response.ok) {
+      // //   throw new Error('something went wrong!');
+      // // }
 
-      // const { token, user } = await response.json();
-      console.log('response.user',response.user);
-      Auth.login(response.addUser.token);
+      // // const { token, user } = await response.json();
+      // console.log('response.user',response.user);
+      // Auth.login(response.addUser.token);
+
+      const mutationResponse = await createUser({
+        variables: {
+          email: userFormData.email,
+          password: userFormData.password,
+          username: userFormData.username
+        },
+      });
+      const token = mutationResponse.data.signToken;
+      Auth.login(token);
+
     } catch (err) {
       console.error(err);
       setShowAlert(true);
