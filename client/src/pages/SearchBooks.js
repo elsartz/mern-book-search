@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
+import { QUERY_GET_ME } from '../utils/queries';
 import { SAVE_BOOK } from '../utils/mutations';
 
 import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'react-bootstrap';
@@ -72,11 +73,19 @@ const SearchBooks = () => {
     }
 
     try {
-      const response = await saveBook(bookToSave, token);
+      // const response = await saveBook(bookToSave, token);
+      // if (!response.ok) {
+      //   throw new Error('something went wrong!');
+      // }
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      await saveBook({  // same as savedBooks
+        variables: {book: bookToSave},
+        update: cache => {
+          const {me} = cache.readQuery({ query: QUERY_GET_ME });
+         
+          cache.writeQuery({ query: QUERY_GET_ME , data: {me: { ...me, savedBooks: [...me.savedBooks, bookToSave] } } })
+        }
+      });
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
