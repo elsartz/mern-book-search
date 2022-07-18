@@ -7,15 +7,19 @@ import { REMOVE_BOOK } from '../utils/mutations';
 
 // import { getMe, deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
-import { removeBookId } from '../utils/localStorage';
+import { removeBookId, saveBookIds } from '../utils/localStorage';
 
 const SavedBooks = () => {
 
   const {loading, setUserData} = useQuery(QUERY_GET_ME);
   const [deleteBook] = useMutation(REMOVE_BOOK);
   const userData = setUserData?.me || {};
+console.log('userdata', userData);
 
-  // const [userData, setUserData] = useState({});
+  const userBooks = userData.savedBooks.map(Book => Book.bookId);
+console.log('userbooks', userBooks);
+
+// const [userData, setUserData] = useState({});
   // use this to determine if `useEffect()` hook needs to run again
   // const userDataLength = Object.keys(userData).length;
 
@@ -55,14 +59,14 @@ const SavedBooks = () => {
     try {  // tried and tried to ...but at the end i was consult for this action
       const response = await deleteBook({
         variables: {bookId: bookId},
-        update: cache => {
-          const setUserData = cache.readQuery({ query: QUERY_GET_ME });
-          const userDataCache = setUserData.me;
-          const savedBooksCache = userDataCache.savedBooks || [];
-          const updatedBookCache = savedBooksCache.filter((book) => book.bookId !== bookId);
-          setUserData.me.savedBooks = updatedBookCache;
-          cache.writeQuery({ query: QUERY_GET_ME , setUserData: {setUserData: {...setUserData.me.savedBooks}}})
-        }
+        // update: cache => {
+        //   const setUserData = cache.readQuery({ query: QUERY_GET_ME });
+        //   const userDataCache = setUserData.me;
+        //   const savedBooksCache = userDataCache.savedBooks || [];
+        //   const updatedBookCache = savedBooksCache.filter((book) => book.bookId !== bookId);
+        //   setUserData.me.savedBooks = updatedBookCache;
+        //   cache.writeQuery({ query: QUERY_GET_ME , setUserData: {setUserData: {...setUserData.me.savedBooks}}})
+        // }
       });
 
       if (!response.ok) {
@@ -77,6 +81,8 @@ const SavedBooks = () => {
       console.error(err);
     }
   };
+
+  saveBookIds(userBooks);
 
   // if data isn't here yet, say so
   // if (!userDataLength) {
